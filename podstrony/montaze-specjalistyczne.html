@@ -1,0 +1,110 @@
+﻿<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Montaże specjalistyczne - Tensile Polska</title>
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+  <body class="subpage">
+    <main class="subpage__content">
+      <a class="subpage__back" href="../index.html">Powrot do strony glownej</a>
+      <h1>Montaże specjalistyczne</h1>
+      <p>Tu wpisz opis uslugi, zakres prac, typowe zastosowania oraz najwazniejsze przewagi oferty.</p>
+      <p>Ten tekst jest w pelni edytowalny w pliku tej podstrony.</p>
+    </main>
+      <div class="contact-modal-overlay" id="contactModal" aria-modal="true" role="dialog" aria-label="Formularz kontaktowy">
+      <div class="contact-modal">
+        <button class="contact-modal__close" id="contactModalClose" aria-label="Zamknij formularz">&times;</button>
+        <h2>Zapytaj o wycenę</h2>
+        <p>Wypełnij formularz — odpiszemy w ciągu 24 godzin.</p>
+        <form class="contact-modal__form" id="contactForm">
+          <div class="contact-modal__row">
+            <div class="contact-modal__field">
+              <label for="cf-name">Imię i nazwisko *</label>
+              <input type="text" id="cf-name" name="name" required placeholder="Jan Kowalski" />
+            </div>
+            <div class="contact-modal__field">
+              <label for="cf-phone">Telefon</label>
+              <input type="tel" id="cf-phone" name="phone" placeholder="+48 000 000 000" />
+            </div>
+          </div>
+          <div class="contact-modal__field">
+            <label for="cf-email">Adres e-mail *</label>
+            <input type="email" id="cf-email" name="email" required placeholder="jan@firma.pl" />
+          </div>
+          <div class="contact-modal__field">
+            <label for="cf-category">Kategoria usługi</label>
+            <select id="cf-category" name="category">
+              <option value="">-- wybierz kategorię --</option>
+              <option value="Konstrukcje stalowe">Konstrukcje stalowe</option>
+              <option value="Dostęp techniczny i sprzęt">Dostęp techniczny i sprzęt</option>
+              <option value="Prace specjalistyczne">Prace specjalistyczne</option>
+              <option value="Konserwacja maszyn">Konserwacja maszyn</option>
+            </select>
+          </div>
+          <div class="contact-modal__field">
+            <label for="cf-subject">Temat zapytania *</label>
+            <input type="text" id="cf-subject" name="subject" required placeholder="np. Wycena montażu membrany" />
+          </div>
+          <div class="contact-modal__field">
+            <label for="cf-message">Wiadomość</label>
+            <textarea id="cf-message" name="message" placeholder="Opisz zakres prac, lokalizację, termin..."></textarea>
+          </div>
+          <button type="submit" class="contact-modal__submit">Wyślij zapytanie →</button>
+        </form>
+        <div class="contact-modal__success" id="contactSuccess">
+          <div class="success-icon">✓</div>
+          <h3>Zapytanie wysłane!</h3>
+          <p>Dziękujemy — odezwiemy się najszybciej jak to możliwe.</p>
+        </div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var overlay = document.getElementById('contactModal');
+        var form    = document.getElementById('contactForm');
+        var success = document.getElementById('contactSuccess');
+
+        function openModal() {
+          overlay.classList.add('is-open');
+          document.body.style.overflow = 'hidden';
+        }
+        function closeModal() {
+          overlay.classList.remove('is-open');
+          document.body.style.overflow = '';
+        }
+
+        document.querySelectorAll('.js-contact-open').forEach(function (el) {
+          el.addEventListener('click', function (e) { e.preventDefault(); openModal(); });
+        });
+
+        document.getElementById('contactModalClose').addEventListener('click', closeModal);
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) closeModal(); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && overlay.classList.contains('is-open')) closeModal(); });
+
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var data = new FormData(form);
+          var body = 'Imię: ' + (data.get('name') || '') +
+                     '\nTelefon: ' + (data.get('phone') || '') +
+                     '\nE-mail: ' + (data.get('email') || '') +
+                     '\nKategoria: ' + (data.get('category') || '') +
+                     '\nTemat: ' + (data.get('subject') || '') +
+                     '\nWiadomość:\n' + (data.get('message') || '');
+          window.location.href = 'mailto:k.orlowski@tensile.pl?subject=' +
+            encodeURIComponent('Zapytanie: ' + (data.get('subject') || '')) +
+            '&body=' + encodeURIComponent(body);
+          form.style.display = 'none';
+          success.style.display = 'block';
+          setTimeout(function () {
+            form.style.display = '';
+            success.style.display = '';
+            form.reset();
+            closeModal();
+          }, 3000);
+        });
+      })();
+    </script>
+  </body>
+</html>
