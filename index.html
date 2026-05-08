@@ -1,0 +1,175 @@
+﻿<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tensile Polska</title>
+    <meta
+      name="description"
+      content="Pierwsza strona Tensile Polska z czterema edytowalnymi filarami usług."
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="start-page" aria-label="Strona startowa Tensile Polska">
+      <section class="hero" aria-label="Tensile Polska">
+        <!-- ZMIANA ZDJECIA: podmien plik zdjecie.webp albo zmien wartosc src ponizej. -->
+        <img class="hero__image" src="zdjecie.webp" alt="Tensile Polska - prace na konstrukcji membranowej" />
+
+        <div class="hero__shade" aria-hidden="true"></div>
+        <canvas class="hero__particles" aria-hidden="true"></canvas>
+
+        <!-- ZMIANA LOGO: podmien plik logos.svg albo zmien wartosc src ponizej. -->
+        <img class="hero__logo" src="logos.svg" alt="Tensile Polska" />
+
+        <div class="pillars" aria-label="Glowne filary oferty">
+          <!--
+            EDYCJA FILAROW:
+            - tytul: zmien tekst w h2
+            - opis: zmien tekst w p
+            - podkategorie: dodaj/usun elementy li
+            - kolor akcentu: zmien --accent w atrybucie style
+            - animacja: opoznienie ustawia --delay
+          -->
+          <article class="pillar" style="--accent: #d7eef7; --delay: 0s">
+            <span class="pillar__number">01</span>
+            <h2>Konstrukcje<br>stalowe</h2>
+            <p>
+              Zajmujemy się kompleksową realizacją konstrukcji stalowych – od przygotowania technologii spawania i nadzoru jakości, przez montaż i wykonywanie połączeń śrubowych, aż po serwis, modernizacje i prace montażowe w obiektach przemysłowych. Zapewniamy zgodność z normami, bezpieczeństwo prac oraz wysoką jakość wykonania na każdym etapie realizacji.
+            </p>
+            <div class="pillar__section-label">Usługi</div>
+            <ul class="pillar__links">
+              <li><a href="podstrony/spawalnictwo-i-nadzor-technologiczny.html">Spawalnictwo i nadzór technologiczny</a></li>
+              <li><a href="podstrony/montaz-i-polaczenia-srubowe.html">Montaż i połączenia śrubowe</a></li>
+              <li><a href="podstrony/serwis-konstrukcji-i-prace-montazowe.html">Serwis konstrukcji i prace montażowe </a></li>
+            </ul>
+          </article>
+
+          <article class="pillar" style="--accent: #f7dfad; --delay: 0.14s">
+            <span class="pillar__number">02</span>
+            <h2>Dostęp techniczny i sprzęt</h2>
+            <p>
+              Zapewniamy profesjonalny dostęp do miejsc trudno dostępnych dzięki specjalistycznemu sprzętowi oraz doświadczonej kadrze. Oferujemy wynajem podnośników koszowych i minikoparek wraz z obsługą operatorską, a także realizację prac wysokościowych z zachowaniem najwyższych standardów BHP.
+            </p>
+            <div class="pillar__section-label">Usługi</div>
+            <ul class="pillar__links">
+              <li><a href="podstrony/wynajem-podnosnika-koszowego.html">Wynajem podnośnika koszowego</a></li>
+              <li><a href="podstrony/wynajem-minikoparki.html">Wynajem minikoparki</a></li>
+              <li><a href="podstrony/prace-wysokosciowe.html">Prace wysokościowe</a></li>
+            </ul>
+          </article>
+
+          <article class="pillar" style="--accent: #b9d9c2; --delay: 0.28s">
+            <span class="pillar__number">03</span>
+            <h2>Prace specjalistyczne</h2>
+            <p>
+              Realizujemy zaawansowane prace specjalistyczne obejmujące montaż i serwis membran PVC, PTFE oraz ETFE, a także szeroki zakres usług budowlanych i technicznych. Wykonujemy mycie elewacji oraz prace wymagające precyzji, doświadczenia i dostępu specjalistycznego. Zapewniamy wysoką jakość realizacji, bezpieczeństwo oraz dopasowanie technologii do specyfiki obiektu i warunków pracy
+            </p>
+            <div class="pillar__section-label">Usługi</div>
+            <ul class="pillar__links">
+              <li><a href="podstrony/membrany-pvc-ptfe-etfe.html">Membrany PVC / PTFE / ETFE</a></li>
+              <li><a href="podstrony/uslugi-budowlane.html">Kompleksowe usługi budowlane</a></li>
+              <li><a href="podstrony/mycie-elewacji.html">Mycie elewacji</a></li>
+            </ul>
+          </article>
+
+          <article class="pillar" style="--accent: #c8cdd4; --delay: 0.42s">
+            <span class="pillar__number">04</span>
+            <h2>Konserwacja maszyn</h2>
+            <p>
+              Zajmujemy się konserwacją, serwisem i naprawą maszyn przemysłowych oraz systemów transportu wewnętrznego. Wykonujemy przeglądy techniczne, usuwamy awarie, wymieniamy zużyte elementy i regulujemy przenośniki, aby ograniczać przestoje oraz utrzymać ciągłość pracy zakładów.
+            </p>
+            <div class="pillar__section-label">Usługi</div>
+            <ul class="pillar__links">
+              <li><a href="podstrony/serwis-i-utrzymanie-ruchu.html">Serwis i utrzymanie ruchu</a></li>
+              <li><a href="podstrony/remonty-urzadzen-przemyslowych.html">Remonty urządzeń przemysłowych</a></li>
+              
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+      /* ---------- hero particles ---------- */
+      (function () {
+        var canvas = document.querySelector('.hero__particles');
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+        var W, H, pts = [];
+        var COUNT = 90;
+        var MAX_DIST = 130;
+
+        function resize() {
+          W = canvas.width  = canvas.offsetWidth;
+          H = canvas.height = canvas.offsetHeight;
+        }
+
+        function mkPt() {
+          return {
+            x:  Math.random() * W,
+            y:  Math.random() * H,
+            r:  Math.random() * 1.6 + 0.4,
+            vx: (Math.random() - 0.5) * 0.35,
+            vy: (Math.random() - 0.5) * 0.35,
+            a:  Math.random() * 0.45 + 0.1
+          };
+        }
+
+        function init() {
+          resize();
+          pts = [];
+          for (var i = 0; i < COUNT; i++) pts.push(mkPt());
+        }
+
+        function draw() {
+          ctx.clearRect(0, 0, W, H);
+
+          /* move */
+          for (var i = 0; i < pts.length; i++) {
+            var p = pts[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            if (p.x < 0) p.x = W;
+            if (p.x > W) p.x = 0;
+            if (p.y < 0) p.y = H;
+            if (p.y > H) p.y = 0;
+          }
+
+          /* lines */
+          for (var i = 0; i < pts.length - 1; i++) {
+            for (var j = i + 1; j < pts.length; j++) {
+              var dx = pts[i].x - pts[j].x;
+              var dy = pts[i].y - pts[j].y;
+              var d  = Math.sqrt(dx * dx + dy * dy);
+              if (d < MAX_DIST) {
+                ctx.beginPath();
+                ctx.moveTo(pts[i].x, pts[i].y);
+                ctx.lineTo(pts[j].x, pts[j].y);
+                ctx.strokeStyle = 'rgba(255,255,255,' + (0.14 * (1 - d / MAX_DIST)).toFixed(3) + ')';
+                ctx.lineWidth = 0.6;
+                ctx.stroke();
+              }
+            }
+          }
+
+          /* dots */
+          for (var i = 0; i < pts.length; i++) {
+            var p = pts[i];
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,' + p.a + ')';
+            ctx.fill();
+          }
+
+          requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('resize', init);
+        init();
+        draw();
+      })();
+    </script>
+  </body>
+</html>
