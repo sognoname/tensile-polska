@@ -1,0 +1,295 @@
+﻿<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tensile Polska</title>
+    <meta
+      name="description"
+      content="Pierwsza strona Tensile Polska z czterema edytowalnymi filarami usług."
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="start-page" aria-label="Strona startowa Tensile Polska">
+      <section class="hero" aria-label="Tensile Polska">
+        <!-- ZMIANA ZDJECIA: podmien plik zdjecie.webp albo zmien wartosc src ponizej. -->
+        <img class="hero__image" src="zdjecie.webp" alt="Tensile Polska - prace na konstrukcji membranowej" />
+
+        <div class="hero__shade" aria-hidden="true"></div>
+        <canvas class="hero__particles" aria-hidden="true"></canvas>
+
+        <!-- ZMIANA LOGO: podmien plik logos.svg albo zmien wartosc src ponizej. -->
+        <img class="hero__logo" src="logos.svg" alt="Tensile Polska" />
+
+        <div class="pillars" aria-label="Glowne filary oferty">
+          <!--
+            EDYCJA FILAROW:
+            - tytul: zmien tekst w h2
+            - opis: zmien tekst w p
+            - podkategorie: dodaj/usun elementy li
+            - kolor akcentu: zmien --accent w atrybucie style
+            - animacja: opoznienie ustawia --delay
+          -->
+          <article class="pillar" style="--accent: #d7eef7; --delay: 0s">
+            <span class="pillar__number">01</span>
+            <h2>Konstrukcje<br>stalowe</h2>
+            <p>
+              Zajmujemy się kompleksową realizacją konstrukcji stalowych – od przygotowania technologii spawania i nadzoru jakości, przez montaż i wykonywanie połączeń śrubowych, aż po serwis, modernizacje i prace montażowe w obiektach przemysłowych. Zapewniamy zgodność z normami, bezpieczeństwo prac oraz wysoką jakość wykonania na każdym etapie realizacji.
+            </p>
+            <div class="pillar__section-label">Usługi</div>
+            <ul class="pillar__links">
+              <li><a href="podstrony/spawalnictwo-i-nadzor-technologiczny.html">Spawalnictwo i nadzór technologiczny</a></li>
+              <li><a href="podstrony/montaz-i-polaczenia-srubowe.html">Montaż i połączenia śrubowe</a></li>
+              <li><a href="podstrony/serwis-konstrukcji-i-prace-montazowe.html">Serwis konstrukcji i prace montażowe </a></li>
+            </ul>
+          </article>
+
+          <article class="pillar" style="--accent: #f7dfad; --delay: 0.14s">
+            <span class="pillar__number">02</span>
+            <h2>Dostęp techniczny i sprzęt</h2>
+            <p>
+              Zapewniamy profesjonalny dostęp do miejsc trudno dostępnych dzięki specjalistycznemu sprzętowi oraz doświadczonej kadrze. Oferujemy wynajem podnośników koszowych i minikoparek wraz z obsługą operatorską, a także realizację prac wysokościowych z zachowaniem najwyższych standardów BHP.
+            </p>
+            <div class="pillar__section-label">Usługi</div>
+            <ul class="pillar__links">
+              <li><a href="podstrony/wynajem-podnosnika-koszowego.html">Wynajem podnośnika koszowego</a></li>
+              <li><a href="podstrony/wynajem-minikoparki.html">Wynajem minikoparki</a></li>
+              <li><a href="podstrony/prace-wysokosciowe.html">Prace wysokościowe</a></li>
+            </ul>
+          </article>
+
+          <article class="pillar" style="--accent: #b9d9c2; --delay: 0.28s">
+            <span class="pillar__number">03</span>
+            <h2>Prace specjalistyczne</h2>
+            <p>
+              Realizujemy zaawansowane prace specjalistyczne obejmujące montaż i serwis membran PVC, PTFE oraz ETFE, a także szeroki zakres usług budowlanych i technicznych. Wykonujemy mycie elewacji oraz prace wymagające precyzji, doświadczenia i dostępu specjalistycznego. Zapewniamy wysoką jakość realizacji, bezpieczeństwo oraz dopasowanie technologii do specyfiki obiektu i warunków pracy
+            </p>
+            <div class="pillar__section-label">Usługi</div>
+            <ul class="pillar__links">
+              <li><a href="podstrony/membrany-pvc-ptfe-etfe.html">Membrany PVC / PTFE / ETFE</a></li>
+              <li><a href="podstrony/uslugi-budowlane.html">Kompleksowe usługi budowlane</a></li>
+              <li><a href="podstrony/mycie-elewacji.html">Mycie elewacji</a></li>
+            </ul>
+          </article>
+
+          <article class="pillar" style="--accent: #c8cdd4; --delay: 0.42s">
+            <span class="pillar__number">04</span>
+            <h2>Konserwacja maszyn</h2>
+            <p>
+              Zajmujemy się konserwacją, serwisem i naprawą maszyn przemysłowych oraz systemów transportu wewnętrznego. Wykonujemy przeglądy techniczne, usuwamy awarie, wymieniamy zużyte elementy i regulujemy przenośniki, aby ograniczać przestoje oraz utrzymać ciągłość pracy zakładów.
+            </p>
+            <div class="pillar__section-label">Usługi</div>
+            <ul class="pillar__links">
+              <li><a href="podstrony/serwis-i-utrzymanie-ruchu.html">Serwis i utrzymanie ruchu</a></li>
+              <li><a href="podstrony/remonty-urzadzen-przemyslowych.html">Remonty urządzeń przemysłowych</a></li>
+              
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+    /* =============================================
+       HERO — advanced particle system
+       - floating particles with depth layers
+       - connecting lines (network effect)
+       - blue-accent glowing nodes
+       - mouse repulsion within 180 px
+       - click → ripple burst
+       - slow horizontal light sweep
+    ============================================= */
+    (function () {
+      var canvas = document.querySelector('.hero__particles');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+
+      var W, H;
+      var pts      = [];
+      var ripples  = [];
+      var COUNT    = 110;
+      var MAX_DIST = 150;
+      var mouse    = { x: -9999, y: -9999 };
+      var REPEL_R  = 180;
+      var REPEL_F  = 3.5;
+      var tick     = 0;
+
+      /* ---- colour palette ---- */
+      var COLORS = [
+        [255, 255, 255],   /* white */
+        [255, 255, 255],   /* white (double weight) */
+        [140, 190, 255],   /* soft blue */
+        [26,  86,  219],   /* brand blue */
+      ];
+
+      function rndColor() {
+        return COLORS[Math.floor(Math.random() * COLORS.length)];
+      }
+
+      /* ---- resize ---- */
+      function resize() {
+        W = canvas.width  = canvas.offsetWidth;
+        H = canvas.height = canvas.offsetHeight;
+      }
+
+      /* ---- create one particle ---- */
+      function mkPt() {
+        var spd  = Math.random() * 0.5 + 0.1;  /* slow … medium */
+        var ang  = Math.random() * Math.PI * 2;
+        var col  = rndColor();
+        var glow = col[2] === 219;               /* brand-blue gets glow */
+        return {
+          x:    Math.random() * W,
+          y:    Math.random() * H,
+          r:    glow ? Math.random() * 2.5 + 1.5 : Math.random() * 1.8 + 0.4,
+          vx:   Math.cos(ang) * spd,
+          vy:   Math.sin(ang) * spd,
+          ox:   0, oy: 0,             /* repulsion offset */
+          col:  col,
+          a:    Math.random() * 0.5 + (glow ? 0.5 : 0.1),
+          glow: glow,
+          /* pulse */
+          phs:  Math.random() * Math.PI * 2,
+          pspd: Math.random() * 0.025 + 0.008
+        };
+      }
+
+      function init() {
+        resize();
+        pts = [];
+        for (var i = 0; i < COUNT; i++) pts.push(mkPt());
+      }
+
+      /* ---- ripple on click ---- */
+      function addRipple(x, y) {
+        ripples.push({ x: x, y: y, r: 0, maxR: 220, a: 0.7, speed: 4 });
+      }
+
+      /* ---- main draw loop ---- */
+      function draw() {
+        tick++;
+        ctx.clearRect(0, 0, W, H);
+
+        /* --- light sweep (diagonal band) --- */
+        var sw   = W * 0.18;
+        var prog = ((tick * 0.4) % (W + sw * 2)) - sw;
+        var grd  = ctx.createLinearGradient(prog - sw, 0, prog + sw, H);
+        grd.addColorStop(0,   'rgba(255,255,255,0)');
+        grd.addColorStop(0.5, 'rgba(255,255,255,0.035)');
+        grd.addColorStop(1,   'rgba(255,255,255,0)');
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, 0, W, H);
+
+        /* --- update & draw ripples --- */
+        for (var i = ripples.length - 1; i >= 0; i--) {
+          var rp = ripples[i];
+          rp.r  += rp.speed;
+          rp.a  *= 0.93;
+          if (rp.r > rp.maxR || rp.a < 0.01) { ripples.splice(i, 1); continue; }
+          ctx.beginPath();
+          ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(140,190,255,' + rp.a.toFixed(3) + ')';
+          ctx.lineWidth   = 1.5;
+          ctx.stroke();
+          /* inner ring */
+          if (rp.r > 30) {
+            ctx.beginPath();
+            ctx.arc(rp.x, rp.y, rp.r * 0.55, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(255,255,255,' + (rp.a * 0.4).toFixed(3) + ')';
+            ctx.lineWidth   = 0.8;
+            ctx.stroke();
+          }
+        }
+
+        /* --- move particles + mouse repulsion --- */
+        for (var i = 0; i < pts.length; i++) {
+          var p  = pts[i];
+          p.x   += p.vx;
+          p.y   += p.vy;
+          if (p.x < 0) p.x = W;
+          if (p.x > W) p.x = 0;
+          if (p.y < 0) p.y = H;
+          if (p.y > H) p.y = 0;
+
+          /* repulsion */
+          var mdx = p.x - mouse.x;
+          var mdy = p.y - mouse.y;
+          var md  = Math.sqrt(mdx * mdx + mdy * mdy);
+          if (md < REPEL_R && md > 0.5) {
+            var f  = (1 - md / REPEL_R) * REPEL_F;
+            p.ox  += (mdx / md) * f;
+            p.oy  += (mdy / md) * f;
+          }
+          p.ox *= 0.88;   /* spring back */
+          p.oy *= 0.88;
+        }
+
+        /* --- draw particles --- */
+        for (var i = 0; i < pts.length; i++) {
+          var p   = pts[i];
+          var rx  = p.x + p.ox;
+          var ry  = p.y + p.oy;
+          var pulse = Math.sin(tick * p.pspd + p.phs) * 0.3 + 0.7;   /* 0.4–1.0 */
+          var alpha = p.a * pulse;
+          var r     = p.r * (p.glow ? (0.8 + pulse * 0.3) : 1);
+
+          if (p.glow) {
+            /* radial glow */
+            var g = ctx.createRadialGradient(rx, ry, 0, rx, ry, r * 4);
+            g.addColorStop(0,   'rgba(80,140,255,' + (alpha * 0.9).toFixed(3) + ')');
+            g.addColorStop(0.5, 'rgba(80,140,255,' + (alpha * 0.3).toFixed(3) + ')');
+            g.addColorStop(1,   'rgba(80,140,255,0)');
+            ctx.beginPath();
+            ctx.arc(rx, ry, r * 4, 0, Math.PI * 2);
+            ctx.fillStyle = g;
+            ctx.fill();
+          }
+
+          ctx.beginPath();
+          ctx.arc(rx, ry, r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba('
+            + p.col[0] + ',' + p.col[1] + ',' + p.col[2] + ','
+            + alpha.toFixed(3) + ')';
+          ctx.fill();
+        }
+
+        requestAnimationFrame(draw);
+      }
+
+      /* ---- events ---- */
+      canvas.addEventListener('mousemove', function (e) {
+        var rc  = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rc.left;
+        mouse.y = e.clientY - rc.top;
+      });
+      canvas.addEventListener('mouseleave', function () {
+        mouse.x = -9999; mouse.y = -9999;
+      });
+      canvas.addEventListener('click', function (e) {
+        var rc = canvas.getBoundingClientRect();
+        addRipple(e.clientX - rc.left, e.clientY - rc.top);
+        /* burst — scatter nearby particles */
+        var bx = e.clientX - rc.left, by = e.clientY - rc.top;
+        for (var i = 0; i < pts.length; i++) {
+          var dx = pts[i].x - bx, dy = pts[i].y - by;
+          var d  = Math.sqrt(dx * dx + dy * dy);
+          if (d < 160 && d > 0.5) {
+            var f = (1 - d / 160) * 6;
+            pts[i].ox += (dx / d) * f;
+            pts[i].oy += (dy / d) * f;
+          }
+        }
+      });
+      window.addEventListener('resize', init);
+
+      /* pointer-events on canvas so mouse hits canvas not page */
+      canvas.style.pointerEvents = 'auto';
+
+      init();
+      draw();
+    })();
+    </script>
+  </body>
+</html>
