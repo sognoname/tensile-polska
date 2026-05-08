@@ -92,84 +92,204 @@
 
     <script src="script.js"></script>
     <script>
-      /* ---------- hero particles ---------- */
-      (function () {
-        var canvas = document.querySelector('.hero__particles');
-        if (!canvas) return;
-        var ctx = canvas.getContext('2d');
-        var W, H, pts = [];
-        var COUNT = 90;
-        var MAX_DIST = 130;
+    /* =============================================
+       HERO — advanced particle system
+       - floating particles with depth layers
+       - connecting lines (network effect)
+       - blue-accent glowing nodes
+       - mouse repulsion within 180 px
+       - click → ripple burst
+       - slow horizontal light sweep
+    ============================================= */
+    (function () {
+      var canvas = document.querySelector('.hero__particles');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
 
-        function resize() {
-          W = canvas.width  = canvas.offsetWidth;
-          H = canvas.height = canvas.offsetHeight;
-        }
+      var W, H;
+      var pts      = [];
+      var ripples  = [];
+      var COUNT    = 110;
+      var MAX_DIST = 150;
+      var mouse    = { x: -9999, y: -9999 };
+      var REPEL_R  = 180;
+      var REPEL_F  = 3.5;
+      var tick     = 0;
 
-        function mkPt() {
-          return {
-            x:  Math.random() * W,
-            y:  Math.random() * H,
-            r:  Math.random() * 1.6 + 0.4,
-            vx: (Math.random() - 0.5) * 0.35,
-            vy: (Math.random() - 0.5) * 0.35,
-            a:  Math.random() * 0.45 + 0.1
-          };
-        }
+      /* ---- colour palette ---- */
+      var COLORS = [
+        [255, 255, 255],   /* white */
+        [255, 255, 255],   /* white (double weight) */
+        [140, 190, 255],   /* soft blue */
+        [26,  86,  219],   /* brand blue */
+      ];
 
-        function init() {
-          resize();
-          pts = [];
-          for (var i = 0; i < COUNT; i++) pts.push(mkPt());
-        }
+      function rndColor() {
+        return COLORS[Math.floor(Math.random() * COLORS.length)];
+      }
 
-        function draw() {
-          ctx.clearRect(0, 0, W, H);
+      /* ---- resize ---- */
+      function resize() {
+        W = canvas.width  = canvas.offsetWidth;
+        H = canvas.height = canvas.offsetHeight;
+      }
 
-          /* move */
-          for (var i = 0; i < pts.length; i++) {
-            var p = pts[i];
-            p.x += p.vx;
-            p.y += p.vy;
-            if (p.x < 0) p.x = W;
-            if (p.x > W) p.x = 0;
-            if (p.y < 0) p.y = H;
-            if (p.y > H) p.y = 0;
-          }
+      /* ---- create one particle ---- */
+      function mkPt() {
+        var spd  = Math.random() * 0.5 + 0.1;  /* slow … medium */
+        var ang  = Math.random() * Math.PI * 2;
+        var col  = rndColor();
+        var glow = col[2] === 219;               /* brand-blue gets glow */
+        return {
+          x:    Math.random() * W,
+          y:    Math.random() * H,
+          r:    glow ? Math.random() * 2.5 + 1.5 : Math.random() * 1.8 + 0.4,
+          vx:   Math.cos(ang) * spd,
+          vy:   Math.sin(ang) * spd,
+          ox:   0, oy: 0,             /* repulsion offset */
+          col:  col,
+          a:    Math.random() * 0.5 + (glow ? 0.5 : 0.1),
+          glow: glow,
+          /* pulse */
+          phs:  Math.random() * Math.PI * 2,
+          pspd: Math.random() * 0.025 + 0.008
+        };
+      }
 
-          /* lines */
-          for (var i = 0; i < pts.length - 1; i++) {
-            for (var j = i + 1; j < pts.length; j++) {
-              var dx = pts[i].x - pts[j].x;
-              var dy = pts[i].y - pts[j].y;
-              var d  = Math.sqrt(dx * dx + dy * dy);
-              if (d < MAX_DIST) {
-                ctx.beginPath();
-                ctx.moveTo(pts[i].x, pts[i].y);
-                ctx.lineTo(pts[j].x, pts[j].y);
-                ctx.strokeStyle = 'rgba(255,255,255,' + (0.14 * (1 - d / MAX_DIST)).toFixed(3) + ')';
-                ctx.lineWidth = 0.6;
-                ctx.stroke();
-              }
-            }
-          }
+      function init() {
+        resize();
+        pts = [];
+        for (var i = 0; i < COUNT; i++) pts.push(mkPt());
+      }
 
-          /* dots */
-          for (var i = 0; i < pts.length; i++) {
-            var p = pts[i];
+      /* ---- ripple on click ---- */
+      function addRipple(x, y) {
+        ripples.push({ x: x, y: y, r: 0, maxR: 220, a: 0.7, speed: 4 });
+      }
+
+      /* ---- main draw loop ---- */
+      function draw() {
+        tick++;
+        ctx.clearRect(0, 0, W, H);
+
+        /* --- light sweep (diagonal band) --- */
+        var sw   = W * 0.18;
+        var prog = ((tick * 0.4) % (W + sw * 2)) - sw;
+        var grd  = ctx.createLinearGradient(prog - sw, 0, prog + sw, H);
+        grd.addColorStop(0,   'rgba(255,255,255,0)');
+        grd.addColorStop(0.5, 'rgba(255,255,255,0.035)');
+        grd.addColorStop(1,   'rgba(255,255,255,0)');
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, 0, W, H);
+
+        /* --- update & draw ripples --- */
+        for (var i = ripples.length - 1; i >= 0; i--) {
+          var rp = ripples[i];
+          rp.r  += rp.speed;
+          rp.a  *= 0.93;
+          if (rp.r > rp.maxR || rp.a < 0.01) { ripples.splice(i, 1); continue; }
+          ctx.beginPath();
+          ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(140,190,255,' + rp.a.toFixed(3) + ')';
+          ctx.lineWidth   = 1.5;
+          ctx.stroke();
+          /* inner ring */
+          if (rp.r > 30) {
             ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(255,255,255,' + p.a + ')';
+            ctx.arc(rp.x, rp.y, rp.r * 0.55, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(255,255,255,' + (rp.a * 0.4).toFixed(3) + ')';
+            ctx.lineWidth   = 0.8;
+            ctx.stroke();
+          }
+        }
+
+        /* --- move particles + mouse repulsion --- */
+        for (var i = 0; i < pts.length; i++) {
+          var p  = pts[i];
+          p.x   += p.vx;
+          p.y   += p.vy;
+          if (p.x < 0) p.x = W;
+          if (p.x > W) p.x = 0;
+          if (p.y < 0) p.y = H;
+          if (p.y > H) p.y = 0;
+
+          /* repulsion */
+          var mdx = p.x - mouse.x;
+          var mdy = p.y - mouse.y;
+          var md  = Math.sqrt(mdx * mdx + mdy * mdy);
+          if (md < REPEL_R && md > 0.5) {
+            var f  = (1 - md / REPEL_R) * REPEL_F;
+            p.ox  += (mdx / md) * f;
+            p.oy  += (mdy / md) * f;
+          }
+          p.ox *= 0.88;   /* spring back */
+          p.oy *= 0.88;
+        }
+
+        /* --- draw particles --- */
+        for (var i = 0; i < pts.length; i++) {
+          var p   = pts[i];
+          var rx  = p.x + p.ox;
+          var ry  = p.y + p.oy;
+          var pulse = Math.sin(tick * p.pspd + p.phs) * 0.3 + 0.7;   /* 0.4–1.0 */
+          var alpha = p.a * pulse;
+          var r     = p.r * (p.glow ? (0.8 + pulse * 0.3) : 1);
+
+          if (p.glow) {
+            /* radial glow */
+            var g = ctx.createRadialGradient(rx, ry, 0, rx, ry, r * 4);
+            g.addColorStop(0,   'rgba(80,140,255,' + (alpha * 0.9).toFixed(3) + ')');
+            g.addColorStop(0.5, 'rgba(80,140,255,' + (alpha * 0.3).toFixed(3) + ')');
+            g.addColorStop(1,   'rgba(80,140,255,0)');
+            ctx.beginPath();
+            ctx.arc(rx, ry, r * 4, 0, Math.PI * 2);
+            ctx.fillStyle = g;
             ctx.fill();
           }
 
-          requestAnimationFrame(draw);
+          ctx.beginPath();
+          ctx.arc(rx, ry, r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba('
+            + p.col[0] + ',' + p.col[1] + ',' + p.col[2] + ','
+            + alpha.toFixed(3) + ')';
+          ctx.fill();
         }
 
-        window.addEventListener('resize', init);
-        init();
-        draw();
-      })();
+        requestAnimationFrame(draw);
+      }
+
+      /* ---- events ---- */
+      canvas.addEventListener('mousemove', function (e) {
+        var rc  = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rc.left;
+        mouse.y = e.clientY - rc.top;
+      });
+      canvas.addEventListener('mouseleave', function () {
+        mouse.x = -9999; mouse.y = -9999;
+      });
+      canvas.addEventListener('click', function (e) {
+        var rc = canvas.getBoundingClientRect();
+        addRipple(e.clientX - rc.left, e.clientY - rc.top);
+        /* burst — scatter nearby particles */
+        var bx = e.clientX - rc.left, by = e.clientY - rc.top;
+        for (var i = 0; i < pts.length; i++) {
+          var dx = pts[i].x - bx, dy = pts[i].y - by;
+          var d  = Math.sqrt(dx * dx + dy * dy);
+          if (d < 160 && d > 0.5) {
+            var f = (1 - d / 160) * 6;
+            pts[i].ox += (dx / d) * f;
+            pts[i].oy += (dy / d) * f;
+          }
+        }
+      });
+      window.addEventListener('resize', init);
+
+      /* pointer-events on canvas so mouse hits canvas not page */
+      canvas.style.pointerEvents = 'auto';
+
+      init();
+      draw();
+    })();
     </script>
   </body>
 </html>
